@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f7fc">
+  <meta name="description" content="BatchDesk — alat pengolah teks massal dalam satu file HTML. Bersihkan duplikat, rapikan spasi, urutkan daftar, lalu salin atau ekspor ke TXT dan CSV. Bisa dipakai offline.">
+  <title>BatchDesk — Less busywork. More done.</title>
+  <style>
+    :root{color-scheme:light;--bg:#f4f7fc;--panel:#fff;--soft:#f8faff;--ink:#1b2c46;--muted:#65748c;--line:#e3e9f3;--blue:#3567e8;--blue-soft:#edf2ff;--green:#297454;--shadow:0 5px 24px #1e3d6b04;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#111925;--panel:#192332;--soft:#1d2a3c;--ink:#e8eef9;--muted:#a3b0c7;--line:#2e3d53;--blue:#93b2ff;--blue-soft:#243753;--green:#8cd3af;--shadow:none}
+    *{box-sizing:border-box} [hidden]{display:none!important} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased} button,input,select,textarea{font:inherit} button{color:inherit;cursor:pointer;touch-action:manipulation} button:disabled{opacity:.42;cursor:default} button,input,select,textarea,summary,a{-webkit-tap-highlight-color:transparent} button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #8baafa;outline-offset:3px} button{border:0} svg{display:block;flex-shrink:0} .icon{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round} .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+    .app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh} .sidebar{position:sticky;top:0;height:100vh;background:var(--panel);border-right:1px solid var(--line);padding:31px 20px;display:flex;flex-direction:column} .brand{display:flex;gap:10px;align-items:center;margin:0 7px 35px} .brand-mark{display:grid;place-items:center;width:36px;height:38px;background:#3567e8;border-radius:11px;color:#fff;box-shadow:0 5px 10px #3567e81a}.brand-mark .icon{width:23px;height:23px} .brand-name{font-size:22px;font-weight:760;letter-spacing:-.9px} .brand-name span{color:var(--blue)} .brand-sub{display:block;font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:0} .nav-label{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:1.5px;margin:0 11px 10px} .nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border-radius:9px;background:transparent;color:var(--muted);text-decoration:none;font-size:12px;text-align:left;margin-bottom:6px} .nav-item.active{background:var(--blue-soft);color:var(--blue);font-weight:650} .nav-item:hover{background:var(--blue-soft)} .nav-item .icon{width:16px;height:16px} .version{margin-left:auto;font-size:8px;border:1px solid currentColor;border-radius:4px;padding:1px 4px;opacity:.7} .workflow{margin:37px 12px 0} .workflow h2{font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:600;text-transform:uppercase;margin:0 0 17px} .workflow ol{list-style:none;margin:0;padding:0;display:grid;gap:19px} .workflow li{display:flex;gap:10px;align-items:flex-start;font-size:11px;color:var(--muted)} .step-number{font:10px var(--mono);border:1px solid var(--line);border-radius:6px;width:24px;height:24px;display:grid;place-items:center;margin-top:1px;color:var(--blue)} .workflow strong{color:var(--ink);display:block;font-weight:550;font-size:11px} .workflow small{font-size:10px} .privacy{margin-top:auto;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 12px} .privacy .icon{color:var(--green);margin-bottom:9px;width:20px;height:20px} .privacy strong{font-size:11px;font-weight:600;display:block} .privacy p{font-size:10px;color:var(--muted);line-height:1.7;margin:4px 0 0} .sidebar-footer{display:flex;align-items:center;justify-content:space-between;padding:18px 5px 0;color:var(--muted);font:9px var(--mono)} .icon-button{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:transparent} .icon-button:hover{background:var(--blue-soft);color:var(--blue)} .icon-button .icon{width:16px;height:16px}
+    .main{width:100%;max-width:1540px;margin:0 auto;padding:30px 36px 24px} .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:9px;letter-spacing:1.7px;color:var(--muted)} .topline-left{display:flex;gap:10px;align-items:center} .topline-left span:first-child{color:var(--blue);font-family:var(--mono)} .offline{display:flex;gap:6px;align-items:center;font-size:10px;letter-spacing:0} .dot{width:6px;height:6px;border-radius:50%;background:#60a782} .hero{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:29px 0 25px} h1{font-size:clamp(27px,2.7vw,40px);line-height:1.2;letter-spacing:-1.5px;font-weight:650;margin:0 0 10px} h1 span{color:var(--blue)} .hero p{font-size:12px;color:var(--muted);margin:0;max-width:620px} .sample-button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:10px 14px;font-size:11px;white-space:nowrap} .sample-button:hover{border-color:var(--blue);color:var(--blue)} .sample-button .icon{width:15px;height:15px}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px} .metric{display:flex;align-items:center;gap:13px;padding:17px 18px;border:1px solid var(--line);border-radius:12px;background:var(--panel)} .metric-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--blue);background:var(--blue-soft)} .metric:nth-child(2) .metric-icon{color:#93763d;background:#faf3df} .metric:nth-child(3) .metric-icon{color:#407b63;background:#edf7f0} :root[data-theme="dark"] .metric:nth-child(2) .metric-icon{background:#3c3524;color:#d9bc75} :root[data-theme="dark"] .metric:nth-child(3) .metric-icon{background:#243d33;color:#8cd3af} .metric strong{display:block;font-size:24px;font-weight:650;letter-spacing:-1px;line-height:1.05;font-variant-numeric:tabular-nums} .metric-label{font-size:10px;color:var(--muted);display:block;margin-top:5px} .metric-tail{margin-left:auto;color:var(--muted);font:9px var(--mono)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)} .settings{padding:20px;margin-bottom:20px} .section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px} .heading-label{display:flex;gap:9px;align-items:center} .heading-label>.icon{color:var(--blue);width:16px;height:16px} h2{margin:0;font-size:13px;font-weight:650;letter-spacing:-.2px} .text-button{background:transparent;color:var(--muted);font-size:10px;padding:4px 0;text-decoration:underline;text-underline-offset:3px} .text-button:hover{color:var(--blue)} .presets{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:16px} .preset-label{font-size:10px;color:var(--muted);margin-right:4px} .preset{display:flex;align-items:center;gap:5px;font-size:10px;padding:7px 10px;border-radius:6px;background:var(--soft);border:1px solid var(--line);color:var(--muted)} .preset[aria-pressed="true"]{border-color:#b6c9fb;color:var(--blue);background:var(--blue-soft)} .preset .icon{width:12px;height:12px} .checks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px} .check-label{display:flex;align-items:flex-start;gap:7px;font-size:11px;cursor:pointer} input[type="checkbox"]{accent-color:#3567e8;width:14px;height:14px;flex:0 0 14px;margin:2px 0 0;cursor:pointer} .control-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px} .field label{display:block;font-size:10px;color:var(--muted);margin:0 0 5px} select,.field-input{width:100%;border:1px solid var(--line);border-radius:7px;background:var(--soft);color:var(--ink);padding:9px 10px;font-size:11px;min-width:0} select{cursor:pointer} .secondary-row{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-top:14px} .secondary-row label{font-size:10px;color:var(--muted)} .secondary-row label:has(input:disabled){opacity:.5} .pipeline-note{font-size:9px;color:var(--muted);text-align:right} .advanced{margin-top:16px;border-top:1px solid var(--line);padding-top:13px} .advanced summary{font-size:11px;color:var(--muted);cursor:pointer;width:fit-content} .advanced summary span{color:var(--blue);font-size:9px;margin-left:6px} .advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px} .advanced-hint{margin:10px 0 0;color:var(--muted);font-size:10px}
+    .editors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px} .editor{overflow:hidden;min-width:0} .editor-head{padding:16px 17px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);min-height:63px} .editor-title{display:flex;align-items:center;gap:9px} .editor-title .number{width:23px;height:23px;background:var(--soft);border:1px solid var(--line);border-radius:6px;font:9px var(--mono);display:grid;place-items:center;color:var(--muted)} .editor-title h2{font-size:12px} .editor-actions{display:flex;align-items:center;gap:11px} .import-button{display:flex;align-items:center;gap:5px;background:transparent;color:var(--muted);padding:6px 0;font-size:10px;white-space:nowrap} .import-button:hover{color:var(--blue)} .import-button .icon{width:14px;height:14px} .clear-button{border:0;width:25px;height:28px} .live-badge{display:flex;align-items:center;gap:5px;color:var(--green);font-size:9px;white-space:nowrap} .live-badge .dot{width:5px;height:5px} .editor-area{position:relative} textarea{display:block;width:100%;min-height:300px;height:300px;resize:vertical;border:0;background:var(--panel);color:var(--ink);padding:19px 19px 24px;font:12px/1.9 var(--mono);tab-size:4;outline-offset:-4px!important;white-space:pre-wrap;overflow-wrap:anywhere} textarea::placeholder{color:var(--muted);opacity:.65} .editor.output textarea{background:var(--soft)} .editor-foot{border-top:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:57px;flex-wrap:wrap} .editor-stats{font:9px var(--mono);color:var(--muted)} .undo-button{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);background:transparent;padding:5px 0} .undo-button .icon{width:13px;height:13px} .output-buttons{display:flex;gap:6px} .button{border:1px solid var(--line);border-radius:7px;background:var(--panel);padding:8px 10px;font-size:10px;display:inline-flex;gap:5px;align-items:center;justify-content:center;white-space:nowrap} .button:hover:not(:disabled){color:var(--blue);border-color:var(--blue)} .button .icon{width:13px;height:13px} .button.primary{background:#3567e8;border-color:#3567e8;color:#fff} .button.primary:hover:not(:disabled){background:#2555ca;color:#fff} .use-result{display:flex;justify-content:flex-end;margin-top:10px} .use-result button{display:flex;align-items:center;gap:5px} .use-result .icon{width:12px;height:12px}
+    .bottom-bar{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-top:18px;padding:16px 0;border-top:1px solid var(--line)} .draft-control{display:flex;align-items:center;gap:9px} .draft-control .check-label{font-size:10px;color:var(--muted)} .draft-status{font-size:9px;color:var(--green)} .export-note{color:var(--muted);font-size:9px;text-align:right;max-width:400px;line-height:1.6} .footnote{display:flex;justify-content:space-between;gap:15px;margin-top:12px;color:var(--muted);font-size:9px} .footnote code{font:9px var(--mono)} .error{padding:11px 14px;margin:0 0 16px;background:#fff0ed;border:1px solid #ebc2b9;color:#9d4433;font-size:11px;border-radius:9px} :root[data-theme="dark"] .error{background:#432c2c;border-color:#65403b;color:#f4b5a8}
+    dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink);width:min(560px,calc(100vw - 32px));padding:26px;box-shadow:0 20px 80px #122a4540} dialog::backdrop{background:#0f1d3655;backdrop-filter:blur(4px)} .dialog-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px} .dialog-head h2{font-size:19px} dialog ol{padding-left:20px;margin:0 0 20px} dialog li{padding:0 0 12px 5px;font-size:12px;color:var(--muted)} dialog li strong{color:var(--ink)} .guide-note{padding:12px 14px;background:var(--blue-soft);border-radius:9px;font-size:11px;color:var(--muted);margin:0 0 13px} .guide-small{font-size:10px;color:var(--muted);margin:0} .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);width:max-content;z-index:20;box-shadow:0 8px 28px #10204020;background:var(--ink);color:var(--panel);border-radius:10px;padding:12px 16px;font-size:12px}
+    @media(min-width:1500px){.main{padding-left:50px;padding-right:50px}textarea{height:355px}} @media(max-width:1150px){.app{grid-template-columns:190px minmax(0,1fr)}.sidebar{padding:27px 14px}.main{padding:27px 25px 20px}.brand{margin-left:3px;gap:8px}.brand-name{font-size:20px}.metric-tail{display:none}.checks{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.editor-foot{align-items:flex-start}.output .editor-foot .editor-stats{width:100%}.output-buttons{margin-left:auto}.hero{align-items:flex-start}.sample-button{padding:9px 10px;margin-top:3px}}
+    @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:16px 24px;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--line);gap:20px}.brand{margin:0}.brand-sub{display:none}.nav-label,.workflow,.privacy,.sidebar-footer>span{display:none}.sidebar nav{margin-left:auto;display:flex;gap:5px}.nav-item{width:auto;margin:0;padding:9px 11px;font-size:11px}.version{display:none}.sidebar-footer{padding:0}.main{padding:26px 24px 20px}.topline{font-size:8px}.hero{padding:25px 0}.editor-foot{align-items:center}.output .editor-foot .editor-stats{width:auto}.metric{padding:15px}.output-buttons{margin-left:0}}
+    @media(max-width:650px){.sidebar{padding:15px 17px;gap:12px}.brand-name{font-size:21px}.sidebar nav .nav-item.active{display:none}.nav-item{font-size:10px;padding:8px}.nav-item .icon{display:none}.sidebar-footer .icon-button{width:30px;height:30px}.main{padding:23px 16px 20px}.topline-left{gap:7px;letter-spacing:1px}.offline{font-size:9px}.hero{gap:14px;padding:24px 0 21px;flex-wrap:wrap}h1{font-size:31px;max-width:380px;letter-spacing:-1.3px}.hero p{font-size:11px;line-height:1.7}.sample-button{font-size:10px;padding:8px 11px}.metrics{gap:8px;margin-bottom:16px}.metric{display:block;padding:13px 12px}.metric-icon{display:none}.metric strong{font-size:24px}.metric-label{font-size:9px;white-space:normal}.settings{padding:16px;margin-bottom:16px}.section-heading{gap:8px}.section-heading h2{font-size:12px}.section-heading .text-button{font-size:9px}.preset-label{width:100%}.presets{gap:6px;padding-bottom:14px}.preset{font-size:9px;padding:7px 8px}.checks{gap:12px 10px}.check-label{font-size:10px}.control-row{grid-template-columns:1fr 1fr}.control-row .field:last-child{grid-column:1/-1}.secondary-row{display:block}.pipeline-note{text-align:left;margin-top:10px;font-size:8px}.advanced-grid{gap:10px}.editors{grid-template-columns:1fr;gap:16px}textarea{height:245px;min-height:200px;font-size:12px}.editor-foot{min-height:54px}.output .editor-foot .editor-stats{width:auto}.bottom-bar{align-items:flex-start;flex-direction:column;gap:12px;margin-top:16px}.export-note{text-align:left;max-width:none}.draft-control{flex-wrap:wrap}.footnote{line-height:1.7;font-size:8px}.editor-head{padding:14px 16px;min-height:58px}}
+    @media(max-width:360px){.nav-item{padding:7px 3px}.brand-name{font-size:19px}.brand-mark{width:31px;height:34px}.sidebar{gap:8px}.metric{padding:12px 9px}.checks{grid-template-columns:1fr}.advanced-grid{grid-template-columns:1fr}.editor-foot{padding:10px 12px}.output .editor-foot .editor-stats{width:100%}.output-buttons{margin-left:auto}.offline{font-size:8px}.section-heading h2{font-size:11px}} @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></symbol>
+    <symbol id="i-work" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 9v11"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3v.1"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.5A9 9 0 0 1 10.5 3a9 9 0 1 0 10 10.5Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3ZM20 2v4m-2-2h4"/></symbol>
+    <symbol id="i-lines" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.1M3 12h.1M3 18h.1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="4" y="3" width="12" height="14" rx="2"/><path d="M9 21h10a2 2 0 0 0 2-2V9M8 7h4m-4 4h4"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h7m4 0h5M4 17h3m4 0h9M11 4v6M7 14v6"/></symbol>
+    <symbol id="i-sort" viewBox="0 0 24 24"><path d="M5 4v16m-3-3 3 3 3-3M12 6h9m-9 6h6m-6 6h3"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6M8 13h8m-8 4h6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="m8 4-5 5 5 5M3 9h11a7 7 0 0 1 0 14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  </svg>
+
+  <div class="app">
+    <aside class="sidebar" aria-label="Navigasi BatchDesk">
+      <div class="brand"><span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-logo"/></svg></span><div><div class="brand-name">BatchDesk<span>.</span></div><span class="brand-sub">Less busywork. More done.</span></div></div>
+      <nav><div class="nav-label">WORKSPACE</div><a class="nav-item active" href="#workspace" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-work"/></svg>Pembersih teks<span class="version">01</span></a><button type="button" class="nav-item" id="open-guide"><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg>Panduan singkat</button></nav>
+      <section class="workflow" aria-labelledby="workflow-title"><h2 id="workflow-title">Tiga langkah saja</h2><ol><li><span class="step-number">01</span><span><strong>Masukkan daftar</strong><small>Tempel teks atau buka TXT.</small></span></li><li><span class="step-number">02</span><span><strong>Pilih pengaturan</strong><small>Hasil berubah otomatis.</small></span></li><li><span class="step-number">03</span><span><strong>Lanjutkan pekerjaan</strong><small>Salin atau unduh hasilnya.</small></span></li></ol></section>
+      <div class="privacy"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><strong>Selesai di perangkatmu.</strong><p>Teks diproses di browser, tanpa dikirim ke server. Tidak perlu akun.</p></div>
+      <div class="sidebar-footer"><span>V1.0 / SINGLE FILE</span><button type="button" class="icon-button" id="theme-toggle" aria-label="Aktifkan mode gelap" title="Ganti tema"><svg class="icon" aria-hidden="true"><use id="theme-icon" href="#i-moon"/></svg></button></div>
+    </aside>
+
+    <main class="main" id="workspace">
+      <div class="topline"><div class="topline-left"><span>01</span><span>TEXT WORKSPACE</span><span>/</span><span>UTILITIES</span></div><span class="offline"><span class="dot"></span> Bisa dipakai offline</span></div>
+      <header class="hero"><div><h1>Pekerjaan repetitif,<br><span>beres dalam sekejap.</span></h1><p>Rapikan daftar pelanggan, catatan, atau data salinan. Sekali atur, langsung beres.</p></div><button type="button" id="load-example" class="sample-button"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>Coba dengan contoh</button></header>
+      <noscript><p class="error">Aktifkan JavaScript untuk memproses teks dan mengunduh hasil.</p></noscript>
+      <p id="error-message" class="error" role="alert" hidden></p>
+
+      <section class="metrics" aria-label="Ringkasan pemrosesan"><div class="metric"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-lines"/></svg></span><div><strong id="source-lines">0</strong><span class="metric-label">Baris sumber</span></div><span class="metric-tail">INPUT</span></div><div class="metric"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span><div><strong id="result-lines">0</strong><span class="metric-label">Baris hasil</span></div><span class="metric-tail">OUTPUT</span></div><div class="metric"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-stack"/></svg></span><div><strong id="duplicates-count">0</strong><span class="metric-label">Duplikat dibuang</span></div><span class="metric-tail">CLEANED</span></div></section>
+
+      <section class="card settings" aria-labelledby="settings-title">
+        <div class="section-heading"><div class="heading-label"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg><h2 id="settings-title">Atur alur kerjamu</h2></div><button type="button" id="reset-settings" class="text-button">Atur ulang pengaturan</button></div>
+        <div class="presets" role="group" aria-label="Pengaturan cepat"><span class="preset-label">Mulai cepat:</span><button type="button" class="preset" data-preset="clean" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>Daftar rapi</button><button type="button" class="preset" data-preset="unique" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-stack"/></svg>Unik tanpa beda huruf</button><button type="button" class="preset" data-preset="alphabet" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-sort"/></svg>Urut A–Z</button><button type="button" class="preset" data-preset="numbered" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-lines"/></svg>Daftar bernomor</button></div>
+        <div class="checks"><label class="check-label"><input type="checkbox" id="trim-lines" checked>Rapikan spasi di tepi</label><label class="check-label"><input type="checkbox" id="collapse-spaces" checked>Satukan spasi berulang</label><label class="check-label"><input type="checkbox" id="remove-empty" checked>Hapus baris kosong</label><label class="check-label"><input type="checkbox" id="dedupe" checked>Hapus baris duplikat</label></div>
+        <div class="control-row"><div class="field"><label for="case-mode">Besar / kecil huruf</label><select id="case-mode"><option value="keep">Pertahankan aslinya</option><option value="lower">huruf kecil</option><option value="upper">HURUF BESAR</option><option value="title">Huruf Awal Kata</option></select></div><div class="field"><label for="sort-mode">Urutan baris</label><select id="sort-mode"><option value="keep">Pertahankan urutan</option><option value="asc">A → Z / kecil → besar</option><option value="desc">Z → A / besar → kecil</option></select></div><div class="field"><label for="list-mode">Gaya daftar</label><select id="list-mode"><option value="plain">Teks biasa</option><option value="numbered">1. Daftar bernomor</option><option value="bullet">• Daftar berpoin</option></select></div></div>
+        <div class="secondary-row"><label class="check-label"><input type="checkbox" id="ignore-case">Abaikan besar/kecil huruf saat mencari duplikat</label><span class="pipeline-note">Bersihkan → ubah huruf → hapus duplikat → urutkan → format</span></div>
+        <details class="advanced" id="advanced-settings"><summary>Cari &amp; ganti, awalan, akhiran <span>OPSIONAL</span></summary><div class="advanced-grid"><div class="field"><label for="find-text">Cari teks persis</label><input class="field-input" id="find-text" placeholder="Contoh: PT. Lama" maxlength="200" autocomplete="off"></div><div class="field"><label for="replace-text">Ganti dengan</label><input class="field-input" id="replace-text" placeholder="Kosongkan untuk menghapus" maxlength="200" autocomplete="off"></div><div class="field"><label for="prefix-text">Awalan setiap baris</label><input class="field-input" id="prefix-text" placeholder="Contoh: Tugas: " maxlength="100" autocomplete="off"></div><div class="field"><label for="suffix-text">Akhiran setiap baris</label><input class="field-input" id="suffix-text" placeholder="Contoh:  — selesai" maxlength="100" autocomplete="off"></div></div><p class="advanced-hint">Cari &amp; ganti membedakan besar/kecil huruf dan dilakukan sebelum pembersihan. Teks yang dicari diperlakukan secara literal.</p></details>
+      </section>
+
+      <section class="editors" aria-label="Editor teks sumber dan hasil">
+        <div class="card editor"><div class="editor-head"><div class="editor-title"><span class="number">01</span><h2 id="input-title">Teks sumber</h2></div><div class="editor-actions"><button type="button" id="import-button" class="import-button"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Buka TXT</button><button type="button" id="clear-input" class="icon-button clear-button" aria-label="Kosongkan teks sumber" title="Kosongkan teks sumber"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg></button></div></div><div class="editor-area"><label class="sr-only" for="source-text">Teks sumber, maksimal 200.000 karakter</label><textarea id="source-text" placeholder="Tempel daftar atau catatanmu di sini…&#10;&#10;  Laporan Mingguan&#10;Rapat tim&#10;Laporan Mingguan&#10;  Kirim    invoice&#10;&#10;Atau klik ‘Coba dengan contoh’ di atas." spellcheck="false" maxlength="200000" aria-describedby="source-stats input-limit"></textarea></div><div class="editor-foot"><span class="editor-stats" id="source-stats">0 karakter</span><button type="button" id="undo-source" class="undo-button" disabled title="Urungkan impor, contoh, kosongkan, atau gunakan hasil"><svg class="icon" aria-hidden="true"><use href="#i-undo"/></svg>Urungkan aksi</button></div></div>
+        <div class="card editor output"><div class="editor-head"><div class="editor-title"><span class="number">02</span><h2 id="output-title">Hasil yang rapi</h2></div><span class="live-badge"><span class="dot"></span>Pratinjau langsung</span></div><div class="editor-area"><label class="sr-only" for="result-text">Hasil pemrosesan teks</label><textarea id="result-text" placeholder="Hasil muncul otomatis di sini.&#10;&#10;Daftar lebih rapi.&#10;Tidak ada pekerjaan berulang.&#10;Lebih banyak waktu untuk hal penting." readonly spellcheck="false" aria-describedby="result-stats"></textarea></div><div class="editor-foot"><span class="editor-stats" id="result-stats">0 karakter</span><div class="output-buttons"><button type="button" class="button" id="download-txt" disabled title="Unduh hasil sebagai TXT"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>TXT</button><button type="button" class="button" id="download-csv" disabled title="Unduh setiap baris sebagai satu baris CSV"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>CSV</button><button type="button" class="button primary" id="copy-result" disabled><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Salin hasil</button></div></div></div>
+      </section>
+      <div class="use-result"><button type="button" class="text-button" id="use-result" disabled><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>Gunakan hasil sebagai sumber baru</button></div>
+      <div class="bottom-bar"><div class="draft-control"><label class="check-label"><input type="checkbox" id="remember-draft">Simpan draf di browser ini</label><span id="draft-status" class="draft-status" role="status">Penyimpanan draf nonaktif</span></div><span class="export-note">CSV berisi satu kolom “Teks”. Awalan =, +, -, dan @ ditandai sebagai teks agar tidak dijalankan sebagai formula.</span></div>
+      <footer class="footnote"><span id="input-limit">Maks. 200.000 karakter · Impor TXT UTF-8 maks. 1 MB.</span><span>Dibuat untuk menghemat langkah.<br><code>HTML + CSS + JavaScript / no dependencies</code></span></footer>
+    </main>
+  </div>
+
+  <input type="file" id="file-input" accept=".txt,text/plain" hidden>
+  <dialog id="guide-dialog" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">Lebih sedikit klik. Lebih cepat selesai.</h2><button type="button" class="icon-button" id="close-guide" aria-label="Tutup panduan"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><ol><li><strong>Masukkan satu item per baris.</strong> Cocok untuk daftar nama, tugas, produk, atau data yang disalin dari dokumen. Gunakan “Buka TXT” untuk file teks UTF-8.</li><li><strong>Pilih pengaturan atau preset.</strong> Hasil diperbarui saat kamu mengetik. Pencarian duplikat dilakukan setelah spasi dan huruf dirapikan. Pengurutan mengenali angka, sehingga Item 2 mendahului Item 10.</li><li><strong>Salin atau unduh.</strong> TXT mempertahankan teks hasil. CSV membuat satu kolom “Teks”, dengan satu item per baris. CSV bukan pengolah tabel multikolom.</li><li><strong>Gunakan “Urungkan aksi” jika perlu.</strong> Mengembalikan teks sebelum impor, muat contoh, kosongkan, atau gunakan hasil. Untuk perubahan saat mengetik, gunakan fitur Undo bawaan browser.</li></ol><p class="guide-note">Draf hanya disimpan jika kamu mencentang “Simpan draf di browser ini”. Hilangkan centang untuk menghapus draf tersimpan. Tidak ada sinkronisasi antarperangkat.</p><p class="guide-small">Mode Huruf Awal Kata mengubah setiap kata menjadi huruf awal kapital. Singkatan seperti PT atau SKU dapat berubah. Teks tetap berada di perangkatmu; hindari berbagi perangkat jika menyimpan draf pribadi.</p></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+
+  <script>
+    /*
+      BatchDesk — Text Cleanup & List Formatter
+      Satu file, tanpa dependensi dan tanpa permintaan jaringan.
+      Cara pakai: buka file ini di browser modern. Untuk GitHub Pages, gunakan nama index.html.
+    */
+    const BatchDeskCore = (() => {
+      'use strict';
+      const MAX_INPUT = 200000;
+      const MAX_OUTPUT = 1000000;
+      const DEFAULTS = Object.freeze({ trim: true, collapse: true, removeEmpty: true, dedupe: true, ignoreCase: false, caseMode: 'keep', sort: 'keep', list: 'plain', find: '', replacement: '', prefix: '', suffix: '' });
+      const collator = new Intl.Collator('id-ID', { numeric: true, sensitivity: 'variant' });
+      const normalise = text => String(text).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
+      const linesOf = text => text === '' ? [] : text.split('\n');
+      const characters = text => Array.from(text).length;
+
+      function optionsFrom(value = {}) {
+        const source = value && typeof value === 'object' ? value : {};
+        const result = { ...DEFAULTS };
+        for (const key of ['trim', 'collapse', 'removeEmpty', 'dedupe', 'ignoreCase']) if (typeof source[key] === 'boolean') result[key] = source[key];
+        for (const [key, allowed] of Object.entries({ caseMode: ['keep', 'lower', 'upper', 'title'], sort: ['keep', 'asc', 'desc'], list: ['plain', 'numbered', 'bullet'] })) if (allowed.includes(source[key])) result[key] = source[key];
+        for (const key of ['find', 'replacement', 'prefix', 'suffix']) if (typeof source[key] === 'string') result[key] = source[key].replace(/[\r\n]/g, '').slice(0, key === 'prefix' || key === 'suffix' ? 100 : 200);
+        return result;
+      }
+
+      function preset(name) {
+        const options = { ...DEFAULTS };
+        if (name === 'unique') options.ignoreCase = true;
+        if (name === 'alphabet') options.sort = 'asc';
+        if (name === 'numbered') options.list = 'numbered';
+        return options;
+      }
+
+      function transform(input, settings) {
+        const options = optionsFrom(settings);
+        if (typeof input !== 'string' || input.length > MAX_INPUT) throw new Error('Teks terlalu panjang. Batas input adalah 200.000 karakter.');
+        let text = normalise(input);
+        const sourceLines = linesOf(text).length;
+        let replacements = 0;
+        if (options.find) {
+          const parts = text.split(options.find);
+          replacements = parts.length - 1;
+          const estimated = text.length + replacements * (options.replacement.length - options.find.length);
+          if (estimated > MAX_OUTPUT) throw new Error('Hasil cari & ganti terlalu panjang. Gunakan pengganti yang lebih singkat.');
+          text = parts.join(options.replacement);
+        }
+        let lines = linesOf(text).map(line => {
+          if (options.trim) line = line.trim();
+          if (options.collapse) line = line.replace(/[^\S\n]+/gu, ' ');
+          if (options.caseMode === 'lower') line = line.toLocaleLowerCase('id-ID');
+          if (options.caseMode === 'upper') line = line.toLocaleUpperCase('id-ID');
+          if (options.caseMode === 'title') line = line.toLocaleLowerCase('id-ID').replace(/(^|[^\p{L}\p{M}\p{N}])(\p{L})/gu, (_, separator, letter) => separator + letter.toLocaleUpperCase('id-ID'));
+          return line;
+        });
+        if (options.removeEmpty) lines = lines.filter(line => line.trim() !== '');
+        let duplicatesRemoved = 0;
+        if (options.dedupe) {
+          const seen = new Set();
+          lines = lines.filter(line => {
+            const key = options.ignoreCase ? line.toLocaleLowerCase('id-ID') : line;
+            if (seen.has(key)) { duplicatesRemoved++; return false; }
+            seen.add(key);
+            return true;
+          });
+        }
+        if (options.sort !== 'keep') lines.sort((a, b) => (options.sort === 'asc' ? 1 : -1) * collator.compare(a, b));
+        const formattedLength = lines.reduce((sum, line, index) => sum + line.length + options.prefix.length + options.suffix.length + (options.list === 'numbered' ? String(index + 1).length + 2 : options.list === 'bullet' ? 2 : 0), Math.max(0, lines.length - 1));
+        if (formattedLength > MAX_OUTPUT) throw new Error('Hasil terlalu panjang. Kurangi jumlah baris, awalan, atau akhiran.');
+        lines = lines.map((line, index) => {
+          const body = options.prefix + line + options.suffix;
+          return options.list === 'numbered' ? `${index + 1}. ${body}` : options.list === 'bullet' ? `• ${body}` : body;
+        });
+        const output = lines.join('\n');
+        if (output.length > MAX_OUTPUT) throw new Error('Hasil terlalu panjang. Kurangi jumlah baris, awalan, atau akhiran.');
+        return { text: output, sourceLines, outputLines: lines.length, duplicatesRemoved, replacements, lines };
+      }
+
+      function toCSV(lines) {
+        // Tanda petik tunggal memaksa awalan formula diperlakukan sebagai teks.
+        const cells = lines.map(value => {
+          const text = String(value);
+          const safe = /^[\s\u0000-\u001f]*[=+\-@]/u.test(text) ? "'" + text : text;
+          return '"' + safe.replace(/"/g, '""') + '"';
+        });
+        return '\uFEFF"Teks"\r\n' + cells.join('\r\n');
+      }
+
+      return Object.freeze({ MAX_INPUT, MAX_OUTPUT, DEFAULTS, normalise, linesOf, characters, optionsFrom, preset, transform, toCSV });
+    })();
+
+    // APP_UI — seluruh interaksi memakai inti pemrosesan di atas.
+    (() => {
+      'use strict';
+      const Core = BatchDeskCore;
+      const $ = id => document.getElementById(id);
+      const DRAFT_KEY = 'batchdesk-draft-v1';
+      const THEME_KEY = 'batchdesk-theme-v1';
+      const formatNumber = number => new Intl.NumberFormat('id-ID').format(number);
+      const optionIDs = { trim: 'trim-lines', collapse: 'collapse-spaces', removeEmpty: 'remove-empty', dedupe: 'dedupe', ignoreCase: 'ignore-case', caseMode: 'case-mode', sort: 'sort-mode', list: 'list-mode', find: 'find-text', replacement: 'replace-text', prefix: 'prefix-text', suffix: 'suffix-text' };
+      const EXAMPLE = '  Laporan Mingguan  \nRapat tim\n\nLaporan Mingguan\n  Kirim    invoice\nUpdate dashboard\nRapat tim\n';
+      let source = '';
+      let options = { ...Core.DEFAULTS };
+      let result = Core.transform('', options);
+      let hasError = false;
+      let theme = 'light';
+      let undoStack = [];
+      let debounceID = null;
+      let toastID = null;
+      let importVersion = 0;
+
+      function toast(message) {
+        window.clearTimeout(toastID);
+        $('toast').textContent = message;
+        $('toast').hidden = false;
+        toastID = window.setTimeout(() => { $('toast').hidden = true; }, 4500);
+      }
+      function announce(message) { $('announcer').textContent = message; }
+      function showError(message = '') { $('error-message').textContent = message; $('error-message').hidden = !message; }
+
+      function updateOptionControls() {
+        for (const [key, id] of Object.entries(optionIDs)) {
+          const element = $(id);
+          if (element.type === 'checkbox') element.checked = options[key];
+          else element.value = options[key];
+        }
+        $('ignore-case').disabled = !options.dedupe;
+        document.querySelectorAll('[data-preset]').forEach(button => {
+          const expected = Core.preset(button.dataset.preset);
+          button.setAttribute('aria-pressed', String(Object.keys(expected).every(key => expected[key] === options[key])));
+        });
+      }
+
+      function saveDraft() {
+        try {
+          if ($('remember-draft').checked) {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({ version: 1, source, options }));
+            $('draft-status').textContent = 'Draf tersimpan';
+          } else {
+            localStorage.removeItem(DRAFT_KEY);
+            $('draft-status').textContent = 'Penyimpanan draf nonaktif';
+          }
+        } catch {
+          $('draft-status').textContent = $('remember-draft').checked ? 'Draf gagal disimpan' : 'Draf tersimpan gagal dihapus';
+          showError('Penyimpanan browser tidak tersedia atau penuh. Teks tetap bisa diproses. Unduh TXT untuk menyimpan pekerjaanmu.');
+        }
+      }
+
+      function render() {
+        window.clearTimeout(debounceID);
+        debounceID = null;
+        hasError = false;
+        showError();
+        try { result = Core.transform(source, options); }
+        catch (error) {
+          hasError = true;
+          result = { text: '', sourceLines: Core.linesOf(Core.normalise(source)).length, outputLines: 0, duplicatesRemoved: 0, replacements: 0, lines: [] };
+          showError(error.message);
+        }
+        $('result-text').value = result.text;
+        $('source-lines').textContent = formatNumber(result.sourceLines);
+        $('result-lines').textContent = formatNumber(result.outputLines);
+        $('duplicates-count').textContent = formatNumber(result.duplicatesRemoved);
+        $('source-stats').textContent = `${formatNumber(Core.characters(source))} karakter`;
+        $('result-stats').textContent = `${formatNumber(Core.characters(result.text))} karakter`;
+        for (const id of ['copy-result', 'download-txt', 'download-csv', 'use-result']) $(id).disabled = hasError || result.text.length === 0;
+        $('use-result').disabled = hasError || !result.text || source === result.text;
+        $('clear-input').disabled = source.length === 0;
+        $('undo-source').disabled = undoStack.length === 0;
+        updateOptionControls();
+        saveDraft();
+      }
+
+      function rememberSource() {
+        if (undoStack.at(-1) !== source) undoStack.push(source);
+        while (undoStack.length > 10 || undoStack.reduce((sum, text) => sum + text.length, 0) > 1000000) undoStack.shift();
+      }
+
+      function setSource(text, record = true) {
+        if (text.length > Core.MAX_INPUT) { toast('Teks terlalu panjang. Batas input 200.000 karakter.'); return false; }
+        if (text === source) { $('undo-source').disabled = undoStack.length === 0; return true; }
+        if (record) rememberSource();
+        source = text;
+        $('source-text').value = text;
+        importVersion++;
+        render();
+        return true;
+      }
+
+      function setTheme(value) {
+        theme = value === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        $('theme-icon').setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon');
+        $('theme-toggle').setAttribute('aria-label', theme === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#111925' : '#f4f7fc';
+      }
+
+      function download(content, extension, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `batchdesk-hasil.${extension}`;
+        document.body.append(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      $('source-text').addEventListener('input', event => {
+        source = event.target.value;
+        importVersion++;
+        window.clearTimeout(debounceID);
+        debounceID = window.setTimeout(render, 120);
+      });
+
+      for (const [key, id] of Object.entries(optionIDs)) {
+        const element = $(id);
+        element.addEventListener(element.tagName === 'INPUT' && element.type !== 'checkbox' ? 'input' : 'change', () => {
+          options[key] = element.type === 'checkbox' ? element.checked : element.value;
+          render();
+        });
+      }
+
+      document.querySelectorAll('[data-preset]').forEach(button => button.addEventListener('click', () => {
+        options = Core.preset(button.dataset.preset);
+        render();
+        announce('Pengaturan cepat diterapkan. Teks sumber tetap sama.');
+      }));
+      $('reset-settings').addEventListener('click', () => { options = { ...Core.DEFAULTS }; render(); toast('Pengaturan kembali ke awal.'); });
+      $('load-example').addEventListener('click', () => { setSource(EXAMPLE); toast('Contoh dimuat. Gunakan Urungkan aksi untuk mengembalikan teks sebelumnya.'); });
+      $('clear-input').addEventListener('click', () => { setSource(''); $('source-text').focus(); announce('Teks dikosongkan. Bisa dikembalikan dengan Urungkan aksi.'); });
+      $('undo-source').addEventListener('click', () => {
+        if (!undoStack.length) return;
+        setSource(undoStack.pop(), false);
+        $('source-text').focus();
+        announce('Teks sebelumnya dikembalikan.');
+      });
+
+      $('use-result').addEventListener('click', () => {
+        render();
+        if (hasError || !result.text) return;
+        if (setSource(result.text)) {
+          // Setelah hasil diterapkan, netralkan transformasi agar awalan tidak ditambahkan dua kali.
+          options = { ...Core.DEFAULTS, trim: false, collapse: false, removeEmpty: false, dedupe: false };
+          render();
+          toast('Hasil menjadi sumber baru. Pengaturan dinetralkan agar teks tidak diproses dua kali.');
+          $('source-text').focus();
+        }
+      });
+
+      $('copy-result').addEventListener('click', async () => {
+        render();
+        if (hasError || !result.text) return;
+        const text = result.text;
+        try {
+          if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+          else throw new Error('Clipboard API tidak tersedia');
+          toast('Hasil berhasil disalin.');
+        } catch {
+          const output = $('result-text');
+          output.focus();
+          output.select();
+          let copied = false;
+          try { copied = document.execCommand('copy'); } catch { /* Gunakan salin manual. */ }
+          toast(copied ? 'Hasil berhasil disalin.' : 'Hasil sudah dipilih. Tekan Ctrl+C / Cmd+C, atau pilih Salin di ponsel.');
+        }
+      });
+      $('download-txt').addEventListener('click', () => { render(); if (!hasError && result.text) { download(result.text, 'txt', 'text/plain;charset=utf-8'); toast('File TXT siap diunduh.'); } });
+      $('download-csv').addEventListener('click', () => { render(); if (!hasError && result.text) { download(Core.toCSV(result.lines), 'csv', 'text/csv;charset=utf-8'); toast('CSV satu kolom siap diunduh. Awalan formula ditandai sebagai teks.'); } });
+
+      $('import-button').addEventListener('click', () => { $('file-input').value = ''; $('file-input').click(); });
+      $('file-input').addEventListener('change', async event => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        if (!/\.txt$/i.test(file.name)) { toast('Pilih file berformat .txt.'); return; }
+        if (file.size > 1024 * 1024) { toast('File terlalu besar. Batas impor adalah 1 MB.'); return; }
+        const version = ++importVersion;
+        try {
+          const buffer = await file.arrayBuffer();
+          const text = new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+          if (version !== importVersion) { toast('Impor dibatalkan karena teks berubah saat file dibaca.'); return; }
+          if (setSource(Core.normalise(text))) toast('File TXT dibuka. Teks sebelumnya bisa dikembalikan dengan Urungkan aksi.');
+        } catch { toast('File tidak dapat dibaca. Gunakan TXT dengan encoding UTF-8.'); }
+      });
+
+      $('remember-draft').addEventListener('change', saveDraft);
+      $('theme-toggle').addEventListener('click', () => {
+        setTheme(theme === 'light' ? 'dark' : 'light');
+        try { localStorage.setItem(THEME_KEY, theme); } catch { /* Tema tetap berlaku untuk sesi ini. */ }
+      });
+      $('open-guide').addEventListener('click', () => $('guide-dialog').showModal());
+      $('close-guide').addEventListener('click', () => $('guide-dialog').close());
+      window.addEventListener('pagehide', () => { if (debounceID !== null) render(); });
+      document.addEventListener('visibilitychange', () => { if (document.hidden && debounceID !== null) render(); });
+
+      // Pulihkan hanya draf dari aplikasi ini, dengan validasi tipe dan batas ukuran.
+      try {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        setTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          const draft = JSON.parse(raw);
+          if (draft?.version === 1 && typeof draft.source === 'string' && draft.source.length <= Core.MAX_INPUT) {
+            source = draft.source;
+            options = Core.optionsFrom(draft.options);
+            $('source-text').value = source;
+            $('remember-draft').checked = true;
+          }
+        }
+      } catch { setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+      if (options.find || options.replacement || options.prefix || options.suffix) $('advanced-settings').open = true;
+      render();
+    })();
+  </script>
+</body>
+</html>
